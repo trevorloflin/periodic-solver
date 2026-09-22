@@ -1,3 +1,7 @@
+.ui-row {
+  display: flex;
+}
+
 input.code-text {
   font-family: monospace;
   font-size: 2rem;
