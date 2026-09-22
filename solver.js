@@ -8,7 +8,6 @@ function Solve() {
   for (var n = 1; n < 20; n++) {
     let impossible = false;
     let confidence = 0;
-    let solvedText = plaintext.value.toLowerCase();
     
     let tableau = {};
     for (var c = 0; c < 26; c++) {
@@ -16,11 +15,11 @@ function Solve() {
     }
 
     // load tableau with known plaintext
-    for (var t = 0; t < ciphertext.value.length; t++) {
+    for (let t = 0; t < ciphertext.value.length; t++) {
       let col = t % n;
       let curCipher = ciphertext.value[t].toUpperCase();
       
-      if (tableau[curCipher].length > col || tableau[curCipher][col] == null) {
+      if (tableau[curCipher].length <= col || tableau[curCipher][col] == null) {
         tableau[curCipher][col] = { Count: 1, Plain: null };
       } else {
         tableau[curCipher][col].Count++;
@@ -40,17 +39,32 @@ function Solve() {
         } else {
           tableau[curCipher][col].Plain = curPlain;
         }
-      } else {
-        if (tableau[curCipher][col].Plain != null) {
-          if (t > solvedText.length) {
-            solvedText += ' '.repeat(t - solvedText.length);
+      }
+    }
+    
+    // populate solve with existing plaintext
+    let solvedText = [...plaintext.value.toLowerCase()];
+    if (!impossible) {
+      for (let t = 0; t < ciphertext.value.length; t++) {
+        let col = t % n;
+        let curCipher = ciphertext.value[t].toUpperCase();
+  
+        //console.log(`curCipher: ${curCipher}, col: ${col}`);
+        try {
+          if (tableau[curCipher][col].Plain != null) {
+            if (t > solvedText.length) {
+              solvedText.push(...(' '.repeat(t - solvedText.length)));
+            }
+            solvedText[t] = tableau[curCipher][col].Plain;
           }
-          solvedText[t] = tableau[curCipher][col].Plain;
+        } catch (e) {
+          console.log(tableau);
+          throw e;
         }
       }
     }
 
-    innerResults += `<div>Period: ${n} ${impossible ? "(impossible)" : "(" + confidence + ")"}: ${solvedText}</div>`;
+    innerResults += `<div>Period ${n} ${impossible ? "(impossible)" : `(${confidence}): <pre>${solvedText.join("")}</pre>`}</div>`;
   }
 
   results.innerHTML = innerResults;
