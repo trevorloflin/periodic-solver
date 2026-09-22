@@ -1,12 +1,15 @@
 .ui-row {
   display: flex;
+  margin-bottom: 2px;
 }
 
 input.code-text {
   font-family: monospace;
-  font-size: 2rem;
+  font-size: 1.2rem;
+  flex-grow: 1;
 }
 
 button.action {
   margin-left: auto;
+  font-size: 1.2rem;
 }
